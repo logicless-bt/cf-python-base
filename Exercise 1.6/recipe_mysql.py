@@ -1,9 +1,9 @@
 import mysql.connector
-conn = conn = mysql.connector.connect(
+conn = mysql.connector.connect(
     host='localhost',
     user='cf-python',
     passwd='Pword4_user1')
-cursor = conn.cursor
+cursor = conn.cursor()
 
 #setting up and accessing database
 cursor.execute("CREATE DATABASE IF NOT EXISTS recipe_database")
@@ -27,13 +27,13 @@ def main_menu(conn, cursor):
         choice = input("Type a number to make a choice: ")
 
         if choice == '1':
-            create_recipe()
+            create_recipe(conn, cursor)
         elif choice == '2':
-            search_recipe()
+            search_recipe(conn, cursor)
         elif choice == '3':
-            update_recipe()
+            update_recipe(conn, cursor)
         elif choice == '4':
-            delete_recipe()
+            delete_recipe(conn, cursor)
         elif choice == "quit":
             print("###############")
             print("Thank you for using the app! Have a good day.")
@@ -44,18 +44,18 @@ def main_menu(conn, cursor):
 def create_recipe(conn, cursor):
     print("\n")
     try:
-        number_of_recipes = input("How many recipes would you like to add? ")
+        number_of_recipes = int(input("How many recipes would you like to add? "))
     except ValueError:
         print("Invalid input. Please enter a valid number.\n")
 
     for i in range(number_of_recipes):
-        print(f"Enter recipe ${i+1}")
+        print(f"Enter recipe #{i+1}")
         print("=================")
 
         name =  input("Enter the name: ")
         cooking_time = int(input("Enter the number of minutes, as a number: "))
         ingredients_input = input("Enter the ingredients, separated by a comma: ")
-        ingredients = input(ingredients_input.split(", "))
+        ingredients = ingredients_input.split(", ")
         difficulty = calculate_difficulty(cooking_time, ingredients)
 
         ingredients_str = ", ".join(ingredients)
@@ -85,6 +85,7 @@ def search_recipe(conn, cursor):
     results = cursor.fetchall()
     if not results:
         print("Please enter a recipe first!\n")
+        return
 
     all_ingredients=set()
     print("Search for a Recipe")
@@ -129,12 +130,12 @@ def search_recipe(conn, cursor):
     print("\n")
 
 def display_recipe(recipe):
-    print(f"\nRecipe: {recipe.name}")
-    print(f"Time: {recipe.cooking_time} mins")
+    print(f"\nRecipe: {recipe[1].title()}")
+    print(f"Time: {recipe[3]} mins")
     print("Ingredients: ")
-    for ingredient in recipe:
-        print(f"- {ingredient}")
-    print(f"Difficulty: {recipe.difficulty}")
+    for ingredient in recipe[2].split(", "):
+        print(f"- {ingredient.title()}")
+    print(f"Difficulty: {recipe[4]}")
 
 def update_recipe(conn, cursor):
     cursor.execute("SELECT * FROM Recipes")
@@ -145,7 +146,7 @@ def update_recipe(conn, cursor):
         return
     
     for result in results:
-        ingredients_list = results[2].split(", ")
+        ingredients_list = result[2].split(", ")
         capitalized_ingredients = [ingredient.title() for ingredient in ingredients_list]
         capitalized_ingredients_str = ", ".join(capitalized_ingredients)
 
