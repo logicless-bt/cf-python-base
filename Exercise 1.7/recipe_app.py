@@ -216,7 +216,7 @@ def search_by_ingredients():
         print("Please enter a recipe first!")
         return None
     
-    #initialize all_ingredients and add to it
+    #initialize all_ingredients and add to it more
     all_ingredients = set()
     for entry in recipe_list:
         ing_list = entry.ingredients.split(", ")
