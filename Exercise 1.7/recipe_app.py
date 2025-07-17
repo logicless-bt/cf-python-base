@@ -196,7 +196,7 @@ def delete_recipe():
     print("Remember that a deleted recipe cannot be restored.")
     delete_id = input("\nEnter the ID of the recipe to delete: ")
 
-    #make sure user wants to delete
+    #make sure user wants to delete recipe
     double_check = input("Are you sure you'd like to delete it? Y/N: ")
     if double_check.lower() == "y":
         #delete recipe
